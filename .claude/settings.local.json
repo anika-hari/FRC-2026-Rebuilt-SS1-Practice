@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.wpilib.org)",
+      "WebFetch(domain:docs.wpilib.org)",
+      "WebFetch(domain:api.ctr-electronics.com)",
+      "WebFetch(domain:v6.docs.ctr-electronics.com)",
+      "WebSearch",
+      "WebFetch(domain:www.chiefdelphi.com)",
+      "WebFetch(domain:robotpy.readthedocs.io)",
+      "Bash(python3 -c \"import websockets; print\\(''websockets:'', websockets.__version__\\)\")",
+      "Bash(python -c \"import websockets; print\\(''websockets available''\\)\")",
+      "Bash(python -c \"import msgpack; print\\(''msgpack available''\\)\")",
+      "Bash(c:/Python314/python.exe -c \"import websockets; print\\(''websockets version:'', websockets.__version__\\)\")",
+      "Bash(c:/Python314/python.exe -c \"import msgpack; print\\(''msgpack version:'', msgpack.version\\)\")",
+      "WebFetch(domain:phoenixpro-documentation--161.org.readthedocs.build)",
+      "Bash(/c/Windows/System32/OpenSSH/ssh.exe:*)"
+    ]
+  }
+}

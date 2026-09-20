@@ -1,0 +1,79 @@
+{
+  "path_elements": [
+    {
+      "type": "translation",
+      "x_meters": 4.071700202914591,
+      "y_meters": 5.5244358974358985,
+      "intermediate_handoff_radius_meters": 0.5499999999999996
+    },
+    {
+      "type": "rotation",
+      "rotation_radians": 0.0,
+      "t_ratio": 0.7130000000000001,
+      "profiled_rotation": true
+    },
+    {
+      "type": "translation",
+      "x_meters": 5.670006819707344,
+      "y_meters": 5.754911827090885,
+      "intermediate_handoff_radius_meters": 0.49999999999999983
+    },
+    {
+      "type": "translation",
+      "x_meters": 6.72784913939545,
+      "y_meters": 6.380339439540544,
+      "intermediate_handoff_radius_meters": 0.19999999999999968
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 7.619875358851356,
+        "y_meters": 5.916421640226616,
+        "intermediate_handoff_radius_meters": 0.3
+      },
+      "rotation_target": {
+        "rotation_radians": 4.71238898038469,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "event_trigger",
+      "t_ratio": 0.3332800147152528,
+      "lib_key": "intakeOn"
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 7.469922386190484,
+        "y_meters": 2.8823381006704656,
+        "intermediate_handoff_radius_meters": 0.2
+      },
+      "rotation_target": {
+        "rotation_radians": 4.71238898038469,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "event_trigger",
+      "t_ratio": 0.19999999999999993,
+      "lib_key": "intakeOff"
+    },
+    {
+      "type": "rotation",
+      "rotation_radians": 0.0,
+      "t_ratio": 0.3583311480568294,
+      "profiled_rotation": true
+    },
+    {
+      "type": "event_trigger",
+      "t_ratio": 0.9376412294742383,
+      "lib_key": "autoShoot"
+    },
+    {
+      "type": "translation",
+      "x_meters": 2.8171056084634056,
+      "y_meters": 2.658686132366764,
+      "intermediate_handoff_radius_meters": 1.0
+    }
+  ]
+}

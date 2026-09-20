@@ -1,0 +1,144 @@
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
+
+package frc.robot.commands;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.RobotController;
+import frc.lib.subsystems.real.FlywheelSubsystem;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
+ *
+ * <p>This version is intended for Phoenix 6 devices on both the RIO and CANivore buses. When using
+ * a CANivore, the thread uses the "waitForAll" blocking method to enable more consistent sampling.
+ * This also allows Phoenix Pro users to benefit from lower latency between devices using CANivore
+ * time synchronization.
+ */
+public class FlywheelAutoTunePhoenixThread extends Thread {
+    private final Lock signalsLock = new ReentrantLock(); // Prevents conflicts when registering signals
+    private BaseStatusSignal[] phoenixSignals = new BaseStatusSignal[0];
+    private final List<Queue<Double>> phoenixQueues = new ArrayList<>();
+    private final List<Queue<Double>> timestampQueues = new ArrayList<>();
+
+    private static boolean isCANFD;
+    private static FlywheelAutoTunePhoenixThread instance = null;
+    private static FlywheelSubsystem<?> flywheel;
+    private static final double VELOCITY_FREQUENCY_HZ = 1000;
+
+    public static FlywheelAutoTunePhoenixThread getInstance(FlywheelSubsystem<?> flywheel) {
+        if (instance == null) {
+            instance = new FlywheelAutoTunePhoenixThread(flywheel);
+        } else if (FlywheelAutoTunePhoenixThread.flywheel != flywheel) {
+            instance.interrupt();
+            instance = new FlywheelAutoTunePhoenixThread(flywheel);
+        }
+        return instance;
+    }
+
+    private FlywheelAutoTunePhoenixThread(FlywheelSubsystem<?> flywheel) {
+        FlywheelAutoTunePhoenixThread.flywheel = flywheel;
+        isCANFD = flywheel.getCANDeviceID().getBus().isNetworkFD();
+        setName("FlywheelAutoTunePhoenixThread");
+        setDaemon(true);
+    }
+
+    @Override
+    public void start() {
+        if (timestampQueues.size() > 0) {
+            super.start();
+        }
+    }
+
+    /** Registers a Phoenix signal to be read from the thread. */
+    public Queue<Double> registerSignal(StatusSignal<AngularVelocity> signal) {
+        Queue<Double> queue = new ArrayBlockingQueue<>(20);
+        signalsLock.lock();
+        flywheel.velocityLock.lock();
+        try {
+            BaseStatusSignal[] newSignals = new BaseStatusSignal[phoenixSignals.length + 1];
+            System.arraycopy(phoenixSignals, 0, newSignals, 0, phoenixSignals.length);
+            newSignals[phoenixSignals.length] = signal;
+            phoenixSignals = newSignals;
+            phoenixQueues.add(queue);
+        } finally {
+            signalsLock.unlock();
+            flywheel.velocityLock.unlock();
+        }
+        return queue;
+    }
+
+    /** Returns a new queue that returns timestamp values for each sample. */
+    public Queue<Double> makeTimestampQueue() {
+        Queue<Double> queue = new ArrayBlockingQueue<>(20);
+        flywheel.velocityLock.lock();
+        try {
+            timestampQueues.add(queue);
+        } finally {
+            flywheel.velocityLock.unlock();
+        }
+        return queue;
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                // System.out.println("==============AUTO TUNING IN==============");
+
+                // Wait for updates from all signals
+                signalsLock.lock();
+                try {
+                    if (isCANFD && phoenixSignals.length > 0) {
+                        BaseStatusSignal.waitForAll(2.0 / VELOCITY_FREQUENCY_HZ, phoenixSignals);
+                    } else {
+                        throw new IllegalStateException("CAN FD not detected");
+                    }
+                } finally {
+                    signalsLock.unlock();
+                }
+
+                // Save new data to queues
+                flywheel.velocityLock.lock();
+                try {
+                    // Sample timestamp is current FPGA time minus average CAN latency
+                    // Default timestamps from Phoenix are NOT compatible with
+                    // FPGA timestamps, this solution is imperfect but close
+                    double timestamp = RobotController.getFPGATime() / 1e6;
+                    double totalLatency = 0.0;
+                    for (BaseStatusSignal signal : phoenixSignals) {
+                        totalLatency += signal.getTimestamp().getLatency();
+                    }
+                    if (phoenixSignals.length > 0) {
+                        timestamp -= totalLatency / phoenixSignals.length;
+                    }
+
+                    // Add new samples to queues
+                    for (int i = 0; i < phoenixSignals.length; i++) {
+                        phoenixQueues.get(i).offer(phoenixSignals[i].getValueAsDouble());
+                    }
+                    for (int i = 0; i < timestampQueues.size(); i++) {
+                        timestampQueues.get(i).offer(timestamp);
+                    }
+                } finally {
+                    flywheel.velocityLock.unlock();
+                }
+            }
+        } finally {
+            System.out.println("Thread terminated.");
+        }
+    }
+}

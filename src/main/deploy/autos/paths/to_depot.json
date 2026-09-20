@@ -1,0 +1,25 @@
+{
+  "path_elements": [
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 3.501616900586181,
+        "y_meters": 4.956,
+        "intermediate_handoff_radius_meters": 1.0
+      },
+      "rotation_target": {
+        "rotation_radians": -0.7069456135203033,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "translation",
+      "x_meters": 1.7128327596170156,
+      "y_meters": 5.806057268722466,
+      "intermediate_handoff_radius_meters": 1.0
+    }
+  ],
+  "constraints": {
+    "end_translation_tolerance_meters": 0.2000000000000001
+  }
+}
