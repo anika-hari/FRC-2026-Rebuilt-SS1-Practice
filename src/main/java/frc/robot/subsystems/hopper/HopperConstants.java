@@ -64,6 +64,8 @@ public class HopperConstants {
     // ====MOTOR CONFIGS====
 
     //Create a TalonFXConfiguration with the constants above
+
+    TalonFXConfiguration config = new TalonFXConfiguration();
     //create a new TalonFXConfiguration() and use .with to set the config
     //Example: new TalonFXConfiguration().withSlot0(new Slot0Configs().withKP(Tunable_Hopper_kP))
     //RotorToSensorRatio is 1 / (kRotorToHopperGearRatio / kSensorToHopperGearRatio)
