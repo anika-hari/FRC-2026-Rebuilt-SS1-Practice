@@ -68,6 +68,14 @@ public class HopperConstants {
     TalonFXConfiguration config = new TalonFXConfiguration();
     //create a new TalonFXConfiguration() and use .with to set the config
     //Example: new TalonFXConfiguration().withSlot0(new Slot0Configs().withKP(Tunable_Hopper_kP))
+    public static final Talon FX Configuration hopperFXConfig = new TalonFXConfiguration()
+        with slot0(new Slot0Configs())
+            withKP(Tunable_Hopper_kP);
+            withKI(Tunable_Hopper_kI);
+            withKG(Tunable_Hopper_kG);
+            withKD(Tunable_Hopper_kD);
+            withKA(Tunable_Hopper_kA);
+
     //RotorToSensorRatio is 1 / (kRotorToHopperGearRatio / kSensorToHopperGearRatio)
     //SensorToMechanism is (1 / kSensorToHopperGearRatio)
     //NeutralMode should be set to Brake, and Inverted should be Clockwise_Positive

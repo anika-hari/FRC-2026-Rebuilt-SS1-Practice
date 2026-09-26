@@ -25,7 +25,7 @@ public class Hopper extends ServoMotorSubsystem<MotorIO> {
     }
 
     
-    //Create 3 funtions that stops the hopper, reverses the hopper, and runs the hopper
+    //Create 3 functions that stops the hopper, reverses the hopper, and runs the hopper
     public void hopperStop(){
         setVoltageImpl(0);
     }
