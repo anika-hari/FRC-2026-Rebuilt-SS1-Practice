@@ -65,23 +65,52 @@ public class HopperConstants {
 
     //Create a TalonFXConfiguration with the constants above
 
-    TalonFXConfiguration config = new TalonFXConfiguration();
     //create a new TalonFXConfiguration() and use .with to set the config
     //Example: new TalonFXConfiguration().withSlot0(new Slot0Configs().withKP(Tunable_Hopper_kP))
-    public static final Talon FX Configuration hopperFXConfig = new TalonFXConfiguration()
-        with slot0(new Slot0Configs())
-            withKP(Tunable_Hopper_kP);
-            withKI(Tunable_Hopper_kI);
-            withKG(Tunable_Hopper_kG);
-            withKD(Tunable_Hopper_kD);
-            withKA(Tunable_Hopper_kA);
+    public static final TalonFXConfiguration hopperFXConfig = new TalonFXConfiguration()
+        .withSlot0(new Slot0Configs()
+            .withKP(Tunable_Hopper_kP)
+            .withKI(Tunable_Hopper_kI)
+            .withKG(Tunable_Hopper_kG)
+            .withKD(Tunable_Hopper_kD)
+            .withKA(Tunable_Hopper_kA))
+        .withFeedback(new FeedbackConfigs()
+            //RotorToSensorRatio is 1 / (kRotorToHopperGearRatio / kSensorToHopperGearRatio)
+            .withRotorToSensorRatio(kRotorToHopperGearRatio)
+            //SensorToMechanism is (1 / kSensorToHopperGearRatio)
+            .withSensorToMechanismRatio(kSensorToHopperGearRatio)   
+        )
+        .withMotionMagic(new MotionMagicConfigs()
+            .withMotionMagicAcceleration(Tunable_Hopper_Accel)
+            .withMotionMagicCruiseVelocity(Tunable_Hopper_Velo)
+            .withMotionMagicJerk(Tunable_Hopper_Jerk)
+        )
+        .withMotorOutput(new MotorOutputConfigs()
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withInverted(InvertedValue.Clockwise_Positive)
+        )
+        .withCurrentLimits(new CurrentLimitsConfigs()
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLimit(kHopperCurrentLimitAmps)
+        );
 
-    //RotorToSensorRatio is 1 / (kRotorToHopperGearRatio / kSensorToHopperGearRatio)
-    //SensorToMechanism is (1 / kSensorToHopperGearRatio)
+    
+
+   
     //NeutralMode should be set to Brake, and Inverted should be Clockwise_Positive
 
     // ====CANRANGE CONFIGS====
     //create a CANrangeConfiguration object with the constants above
+    public static final CANrangeConfiguration canRangeConfig = new CANrangeConfiguration()
+        .withFovParams(new FovParamsConfigs()
+            .withFOVRangeX(kFOVDegrees)
+            .withFOVRangeY(kFOVDegrees)
+        )
+        .withProximityParams(new ProximityParamsConfigs()
+            .withMinSignalStrengthForValidMeasurement(kMinSignalStrengthForValidMeasurement)
+            .withProximityHysteresis(kProximityHysteresis)
+            .withProximityThreshold(kProximityThresholdMeters)
+        );
 
     static {
         // ====MOTOR=====

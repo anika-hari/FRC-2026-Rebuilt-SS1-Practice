@@ -13,14 +13,46 @@ public class HopperManager extends MagicVirtualSubsystem {
     private HopperState hopperState = HopperState.IDLE;
 
     //Create a constructor that takes in a RobotContainer. inside the constructor, set the hopper variable to the Hopper object from RobotContainer
+    public HopperManager(RobotContainer robotContainer){
+        this.hopper=robotContainer.getHopper();
+        if (hopper.isDisabled())
+        setDisabled(true);
+    
+        hopper.setDefaultCommand(hopperDefault());
+    }
     // Mark manager as disabled if subsystem are disabled
     //Set the default command for the hopper to the hopperDefault command you will make below.
 
     //Create a periodic that logs the hopper state
-   
+    @Override 
+    public void periodic(){
+        Logger.recordOutput("Hopper/HopperState", hopperState);
+    }
+
     //Create an empty SimulationPeriodic
+    @Override
+    public void simulationPeriodic(){
+        
+    }
 
     //Create a hopperDefault function taht returns a command
+    public Command hopperDefault() {
+        return Commands.run(
+        ()-> {
+            switch (hopperState){
+                case IDLE:
+                    hopper.hopperStop();
+                case FEEDING:
+                    hopper.Start();
+                 
+                case REVERSE:
+                    hopper.Stop();
+                case JAMMED:
+                    hopper.Reverse();
+            }
+        }
+        );
+    }
     //Use a run command to check the hopperState, and runs an action depending on the state
 
 
