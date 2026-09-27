@@ -46,9 +46,9 @@ public class HopperManager extends MagicVirtualSubsystem {
                     hopper.Start();
                  
                 case REVERSE:
-                    hopper.Stop();
-                case JAMMED:
                     hopper.Reverse();
+                case JAMMED:
+                    hopper.hopperStop();
             }
         }
         );
@@ -57,8 +57,25 @@ public class HopperManager extends MagicVirtualSubsystem {
 
 
     //Create 2 functions to set and get the hopper state
+    public void setHopperState(HopperState state){
+        hopperState = state;
 
+    }
+    public HopperState getHopperState(){
+       return hopperState;
+    }
 
     //create 3 functions that return commands that run, reverse, and stop the hopper but setting the hopper state
-
+    public void setHopperIDLE(){
+        hopperState = HopperState.IDLE;
+    }
+     public void setHopperJAMMED(){
+        hopperState = HopperState.JAMMED;
+    }
+     public void setHopperFEEDING(){
+        hopperState = HopperState.FEEDING;
+    }
+     public void setHopperREVERSE(){
+        hopperState = HopperState.IDLE;
+    }
 }
